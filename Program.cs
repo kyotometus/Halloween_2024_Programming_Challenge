@@ -9,31 +9,39 @@ class SimpleWindow : Gtk.Window
     {
         PhoneWave phoneWave = new PhoneWave();
 
-        SetDefaultSize(400, 200);
+        SetDefaultSize(400, 300);
         SetPosition(WindowPosition.Center);
         DeleteEvent += delegate { Application.Quit(); };
 
-        Box vbox = new Box(Orientation.Vertical, 5);
+        phoneWave.GenerateRandomImage("Assets/random.jpg", 500, 500, 5);
 
-        Pixbuf pixbuf = new Pixbuf("Assets/cat.jpg");
+        Fixed fixedContainer = new Fixed();
+
+        Pixbuf pixbuf = new Pixbuf("Assets/captchaEx.png");
         Pixbuf scaledPixbuf = pixbuf.ScaleSimple(400, 200, InterpType.Bilinear);
 
+        Pixbuf pixbufOverlay = new Pixbuf("Assets/random.jpg");
+        Pixbuf scaledPixbufOverlay = pixbufOverlay.ScaleSimple(400, 200, InterpType.Bilinear);
+
         Image image = new Image(scaledPixbuf);
-        vbox.PackStart(image, false, false, 0);
+
+        Image overlay = new Image(scaledPixbufOverlay);
+
+        fixedContainer.Put(image, 0, 0);
+        fixedContainer.Put(overlay, 0, 0);
 
         Entry input = new Entry();
-        vbox.PackStart(input, false, false, 0);
+        input.WidthRequest = 400;
+        fixedContainer.Put(input, 0, 220);
 
         Box hbox = new Box(Orientation.Horizontal, 5);
 
         Button buttonSubmit = new Button("Submit");
+        buttonSubmit.WidthRequest = 190;
         buttonSubmit.Clicked += delegate
         {
             Console.WriteLine("Button clicked");
             Console.WriteLine("Input: " + input.Text);
-
-            // Not where it should be, but it's just an example
-            phoneWave.GenerateRandomImage("Assets/random.jpg");
 
             if (input.Text == "cat")
             {
@@ -50,17 +58,25 @@ class SimpleWindow : Gtk.Window
         };
 
         Button buttonRegenerate = new Button("Regenerate");
+        buttonRegenerate.WidthRequest = 190;
         buttonRegenerate.Clicked += delegate
         {
-            Console.WriteLine("I'm afraid nothing happens here.");
+            phoneWave.GenerateRandomImage("Assets/random.jpg", 500, 500, 5);
+
+            pixbufOverlay = new Pixbuf("Assets/random.jpg");
+            scaledPixbufOverlay = pixbufOverlay.ScaleSimple(400, 200, InterpType.Bilinear);
+
+            overlay.Pixbuf = scaledPixbufOverlay;
         };
 
-        hbox.PackStart(buttonSubmit, true, true, 0);
-        hbox.PackStart(buttonRegenerate, true, true, 0);
+        hbox.PackStart(buttonSubmit, false, false, 0);
+        hbox.PackStart(buttonRegenerate, false, false, 0);
 
-        vbox.PackStart(hbox, false, false, 0);
+        hbox.WidthRequest = 400;
 
-        Add(vbox);
+        fixedContainer.Put(hbox, 0, 260);
+
+        Add(fixedContainer);
 
         ShowAll();
     }

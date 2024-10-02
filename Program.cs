@@ -5,29 +5,30 @@ using PhoneWaveNamespace;
 
 class SimpleWindow : Gtk.Window
 {
-    public SimpleWindow() : base("Simple GtkSharp Window")
+    private string generatedCaptchaText;
+    private PhoneWave phoneWave;
+    private Image overlay;
+
+    // GUI Constructor
+    public SimpleWindow() : base("Mommy Kurisu Makise Captcha")
     {
-        PhoneWave phoneWave = new PhoneWave();
+        phoneWave = new PhoneWave();
 
         SetDefaultSize(400, 300);
         SetPosition(WindowPosition.Center);
+        Resizable = false;
         DeleteEvent += delegate { Application.Quit(); };
 
-        phoneWave.GenerateRandomImage("Assets/random.jpg", 500, 500, 5);
+        // This function takes care of generating the captcha image and overlaying it on the window
+        generatedCaptchaText = phoneWave.GenerateRandomCaptchaWithOverlay("Assets/captcha.png", 500, 200);
 
         Fixed fixedContainer = new Fixed();
 
-        Pixbuf pixbuf = new Pixbuf("Assets/captchaEx.png");
-        Pixbuf scaledPixbuf = pixbuf.ScaleSimple(400, 200, InterpType.Bilinear);
+        Pixbuf pixbufCaptcha = new Pixbuf("Assets/captcha.png");
+        Pixbuf scaledPixbufCaptcha = pixbufCaptcha.ScaleSimple(400, 200, InterpType.Bilinear);
 
-        Pixbuf pixbufOverlay = new Pixbuf("Assets/random.jpg");
-        Pixbuf scaledPixbufOverlay = pixbufOverlay.ScaleSimple(400, 200, InterpType.Bilinear);
+        overlay = new Image(scaledPixbufCaptcha);
 
-        Image image = new Image(scaledPixbuf);
-
-        Image overlay = new Image(scaledPixbufOverlay);
-
-        fixedContainer.Put(image, 0, 0);
         fixedContainer.Put(overlay, 0, 0);
 
         Entry input = new Entry();
@@ -36,6 +37,8 @@ class SimpleWindow : Gtk.Window
 
         Box hbox = new Box(Orientation.Horizontal, 5);
 
+        // This is the ultra complex security system
+        // Literally impossible to crack
         Button buttonSubmit = new Button("Submit");
         buttonSubmit.WidthRequest = 190;
         buttonSubmit.Clicked += delegate
@@ -43,31 +46,41 @@ class SimpleWindow : Gtk.Window
             Console.WriteLine("Button clicked");
             Console.WriteLine("Input: " + input.Text);
 
-            if (input.Text == "cat")
+            if (input.Text == generatedCaptchaText)
             {
-                MessageDialog md = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, "Correct, it's a cat!");
+                MessageDialog md = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, "You now have access to LaurieWired Youtube channel!");
+                md.Run();
+                md.Destroy();
+            }
+            else if (input.Text == "LaurieWired" || input.Text == "lauriewired")
+            {
+                MessageDialog md = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, "Weird flex but ok");
                 md.Run();
                 md.Destroy();
             }
             else
             {
-                MessageDialog md = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Wrong!!!!!");
+                MessageDialog md = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Get some glasses!!!");
                 md.Run();
                 md.Destroy();
             }
         };
 
+        // In case the user has some skill issues
         Button buttonRegenerate = new Button("Regenerate");
         buttonRegenerate.WidthRequest = 190;
         buttonRegenerate.Clicked += delegate
         {
-            phoneWave.GenerateRandomImage("Assets/random.jpg", 500, 500, 5);
+            generatedCaptchaText = phoneWave.GenerateRandomCaptchaWithOverlay("Assets/captcha.png", 500, 200);
 
-            pixbufOverlay = new Pixbuf("Assets/random.jpg");
-            scaledPixbufOverlay = pixbufOverlay.ScaleSimple(400, 200, InterpType.Bilinear);
+            Pixbuf newPixbufCaptcha = new Pixbuf("Assets/captcha.png");
+            Pixbuf newScaledPixbufCaptcha = newPixbufCaptcha.ScaleSimple(400, 200, InterpType.Bilinear);
 
-            overlay.Pixbuf = scaledPixbufOverlay;
+            overlay.Pixbuf = newScaledPixbufCaptcha;
+
+            input.Text = "";
         };
+
 
         hbox.PackStart(buttonSubmit, false, false, 0);
         hbox.PackStart(buttonRegenerate, false, false, 0);
@@ -81,6 +94,7 @@ class SimpleWindow : Gtk.Window
         ShowAll();
     }
 
+    // AGI
     static void Main()
     {
         Application.Init();

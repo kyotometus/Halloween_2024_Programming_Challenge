@@ -1,28 +1,55 @@
 using SkiaSharp;
+using System;
 
 namespace PhoneWaveNamespace
 {
     public class PhoneWave
     {
-        public void GenerateRandomImage(string filePath, int width = 500, int height = 500)
+        public void GenerateRandomImage(string filePath, int width = 500, int height = 500, int pixelSize = 10)
         {
-            using (var bitmap = new SKBitmap(width, height))
+            var info = new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
+
+            using (var bitmap = new SKBitmap(info))
+            using (var canvas = new SKCanvas(bitmap))
             {
-                var random = new Random();
+                canvas.Clear(SKColors.Transparent);
 
-                // Loop through each pixel
-                // Probably not the most efficient way to do this, but it's just an example
-                for (int x = 0; x < width; x++)
+                Random random = new Random();
+
+                for (int x = 0; x < width; x += pixelSize)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int y = 0; y < height; y += pixelSize)
                     {
-                        var r = (byte)random.Next(256);
-                        var g = (byte)random.Next(256);
-                        var b = (byte)random.Next(256);
+                        if (random.NextDouble() > 0.5)
+                        {
+                            var paint = new SKPaint
+                            {
+                                Color = new SKColor(10, 10, 10, 255),
+                                Style = SKPaintStyle.Fill
+                            };
 
-                        var color = new SKColor(r, g, b);
+                            canvas.DrawRect(new SKRect(x, y, x + pixelSize, y + pixelSize), paint);
+                        }
+                        else
+                        {
+                            for (int tinyX = x; tinyX < x + pixelSize; tinyX++)
+                            {
+                                for (int tinyY = y; tinyY < y + pixelSize; tinyY++)
+                                {
+                                    byte tinyR = (byte)random.Next(256);
+                                    byte tinyG = (byte)random.Next(256);
+                                    byte tinyB = (byte)random.Next(256);
 
-                        bitmap.SetPixel(x, y, color);
+                                    var tinyPaint = new SKPaint
+                                    {
+                                        Color = new SKColor(tinyR, tinyG, tinyB, 150),
+                                        Style = SKPaintStyle.Fill
+                                    };
+
+                                    canvas.DrawRect(new SKRect(tinyX, tinyY, tinyX + 1, tinyY + 1), tinyPaint);
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -34,7 +61,7 @@ namespace PhoneWaveNamespace
                 }
             }
 
-            Console.WriteLine($"gelbana -> {filePath}");
+            Console.WriteLine($"Random image with both tiny and thicker pixels generated and saved as {filePath}");
         }
     }
 }

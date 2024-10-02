@@ -1,11 +1,14 @@
 ﻿using Gtk;
 using Gdk;
 using System;
+using PhoneWaveNamespace;
 
 class SimpleWindow : Gtk.Window
 {
     public SimpleWindow() : base("Simple GtkSharp Window")
     {
+        PhoneWave phoneWave = new PhoneWave();
+
         SetDefaultSize(400, 200);
         SetPosition(WindowPosition.Center);
         DeleteEvent += delegate { Application.Quit(); };
@@ -28,6 +31,9 @@ class SimpleWindow : Gtk.Window
         {
             Console.WriteLine("Button clicked");
             Console.WriteLine("Input: " + input.Text);
+
+            // Not where it should be, but it's just an example
+            phoneWave.GenerateRandomImage("Assets/random.jpg");
 
             if (input.Text == "cat")
             {

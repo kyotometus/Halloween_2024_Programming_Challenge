@@ -1,5 +1,5 @@
 using SkiaSharp;
-using System;
+using Gdk;
 
 namespace PhoneWaveNamespace
 {
@@ -7,7 +7,7 @@ namespace PhoneWaveNamespace
     {
 
         // https://www.youtube.com/watch?v=1Bf0aYBk0OQ | Literally AGI 
-        public string GenerateRandomCaptchaWithOverlay(string filePath, int width = 500, int height = 200, int textSize = 40, int characterCount = 6)
+        public (string captchaText, Pixbuf captchaPixbuf) GenerateRandomCaptchaWithOverlay(int width = 500, int height = 200, int textSize = 40, int characterCount = 6)
         {
             var info = new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
             string captchaText = GenerateRandomText(characterCount);
@@ -86,15 +86,16 @@ namespace PhoneWaveNamespace
 
                 using (var image = SKImage.FromBitmap(bitmap))
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                using (var stream = System.IO.File.OpenWrite(filePath))
+                using (var stream = new MemoryStream())
                 {
                     data.SaveTo(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    Pixbuf captchaPixbuf = new Pixbuf(stream);
+                    Console.WriteLine($"Text: '{captchaText}");
+                    return (captchaText, captchaPixbuf);
                 }
             }
-
-            Console.WriteLine($"Text: '{captchaText}', saved at {filePath}");
-
-            return captchaText;
         }
 
         // Generate a random string of characters, can AI come up with a better solution?

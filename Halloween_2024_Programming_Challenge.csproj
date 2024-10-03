@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <!-- In case you want to build the program on unix, change to "Exe" -->
+    <!-- Tbh i don't even know, i built using WSL2 and everything went fine -->
+    <OutputType>WinExe</OutputType> 
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

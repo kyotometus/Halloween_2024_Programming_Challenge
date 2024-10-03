@@ -1,3 +1,39 @@
+# Attempt Info
+
+I ignored the fact that i have 5 issues open at work and decided to do this.
+
+Developed using GtkSharp and C#.
+
+The release already contains the compiled binary for Windows.
+
+Dependencies you need:
+- Gtk+ Runtime (https://www.gtk.org/)
+- .NET 8.0 (https://dotnet.microsoft.com/download/dotnet/8.0)
+
+### Running the source code:
+```bash
+dotnet restore
+dotnet run
+```
+
+### Installing GTK (If needed):
+
+Windows Chocolatey:
+```bash
+choco install gtk-runtime
+```
+
+Ubuntu:
+```bash
+sudo apt install libgtk-3-dev
+```
+
+MacOS:
+```bash
+brew install gtk+3
+```
+
+
 # The LaurieWired 2024 Halloween Programming Challenge 🎃
 
 <p align="center" width="100%"><img src="https://github.com/user-attachments/assets/39347b76-7035-42eb-b843-660102456daf" width="50%" align="center"/></p>
